@@ -73,12 +73,14 @@ end process;
 -- MUX 1
 selected_bit <= reg_storage (conv_integer(contador_zeros));
 
--- MUX 2
-mux_2 <= if contador_enable = '1' then selected_bit else '0';
+-- saida
+linha <= selected_bit when scurr = S2 else 
+			'1' when scurr = S0 else '0';
 
 xor_controle <= contador_zeros = "000";
 
 --	maquina de estados
+-- 2 process , 1 pra registrar e 1 pra gerar o next state
 scurrent <= case xor_controle
 		when '1' => if send = '1' then S1,
 		when '0' => if snext = S1,
