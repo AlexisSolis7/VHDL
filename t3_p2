@@ -1,50 +1,57 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
 
 entity projeto_2_serial is
     Port ( 
 	 -- controle
-			  clock: in STD_LOGIC;
+			  clock : in STD_LOGIC;
+           reset : in  STD_LOGIC;
+			  
 			  palavra : in  STD_LOGIC_VECTOR(7 downto 0);
            send : in  STD_LOGIC;
-           busy : out  STD_LOGIC;
-           linha : out  STD_LOGIC;
-           reset : in  STD_LOGIC
+           
+			  busy : out  STD_LOGIC;
+           linha : out  STD_LOGIC
 	);
 end projeto_2_serial;
 
 architecture Behavioral of projeto_2_serial is
 	-- registrador
-		reg_storage : std_logic_vector(7 downto 0);
+		signal reg_storage : std_logic_vector(7 downto 0);
 	-- contador
 		signal contador_enable : STD_LOGIC;
 		signal contador_load : STD_LOGIC;
 		signal contador_zeros : std_logic_vector(2 downto 0);
-begin
--- controle
-process(clock, reset, palavra, )
---	if (send'event and send='1') then
-	if (busy='0' and send='1') then
-	 linha <= '0';
-	elsif (busy='0' and contador_zeros /= "000") then
-		linha <= '0';
-	elsif (busy='1' and contador_zeros /= "000") then
-		linha <= palavra; -- checar isso
 		
-	end if;
-end process;
+	-- MUXs
+		signal selected_bit : std_logic;
+		signal mux_2 : std_logic;
+		
+	-- XOR
+		signal xor_controle: STD_LOGIC;
+		
+	---- maquina de estados
+		type STATES is (S0, S1, S2, S3); -- enum
+		-- S0 -> Aguardando
+		-- S1 -> Inicializando
+		-- S2 -> Transmitindo
+		-- S3 -> Finalizando
+		signal scurrent, snext: STATES;
+begin
 
 -- contador
 process(clock, reset)
+begin
 if (reset = '1') then 
 		contador_zeros <= (Others => '0');
 elsif (rising_edge(clock)) then
 	   if (contador_load = '1') then
-			contador_zeros <= (Others => '1);
+			contador_zeros <= (Others => '1');
 		end if;
 		if (contador_enable = '1') then
-			contador_zeros <= contador_zeros - '1';
+			contador_zeros <= contador_zeros - 1;
 		end if;
 end if;
 end process;
@@ -52,6 +59,7 @@ end process;
 
 -- registrador
 process(clock, reset)
+begin
    if (reset = '1') then 
 		reg_storage <= (Others => '0');
 	elsif (rising_edge(clock)) then
@@ -61,39 +69,19 @@ process(clock, reset)
 	end if;
 end process;
 
-end Behavioral;
+
+-- MUX 1
+selected_bit <= reg_storage (conv_integer(contador_zeros));
+
+-- MUX 2
+mux_2 <= if contador_enable = '1' then selected_bit else '0';
+
+xor_controle <= contador_zeros = "000";
+
+--	maquina de estados
+scurrent <= case xor_controle
+		when '1' => if send = '1' then S1,
+		when '0' => if snext = S1,
 
 
-
--- MUX
-
-
--- Declaração da entidade do MUX
-entity mux_8bits is
-    port (
-        sel : in std_logic_vector(2 downto 0); -- Seletor de 3 bits para escolher qual bit do registrador usar
-        Q : in std_logic_vector(7 downto 0); -- Entrada de dados de 8 bits (saída do registrador)
-        saida : out std_logic -- Saída de um único bit selecionado
-    );
-end mux_8bits;
-
--- Arquitetura do MUX
-architecture Behavioral of mux_8bits is
-begin
-    -- Processo que determina a saída com base no seletor
-    process(sel, Q) 
-    begin
-        case sel is -- Início da estrutura de seleção
-            when "000" => saida <= Q(0); -- Se sel é 0, pega o bit 0 de Q
-            when "001" => saida <= Q(1); -- Se sel é 1, pega o bit 1 de Q
-            when "010" => saida <= Q(2); -- Se sel é 2, pega o bit 2 de Q
-            when "011" => saida <= Q(3); -- Se sel é 3, pega o bit 3 de Q
-            when "100" => saida <= Q(4); -- Se sel é 4, pega o bit 4 de Q
-            when "101" => saida <= Q(5); -- Se sel é 5, pega o bit 5 de Q
-            when "110" => saida <= Q(6); -- Se sel é 6, pega o bit 6 de Q
-            when "111" => saida <= Q(7); -- Se sel é 7, pega o bit 7 de Q
-            when others => saida <= '0'; -- Caso nenhum valor se encaixe, seta a saída como 0
-        end case; -- Fim da estrutura de seleção
-    end process; -- Fim do processo
 end Behavioral; -- Fim da arquitetura
-
