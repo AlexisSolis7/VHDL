@@ -1,0 +1,64 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity projeto_2_serial is
+    Port ( 
+	 -- controle
+			  clock: in STD_LOGIC;
+			  palavra : in  STD_LOGIC_VECTOR(7 downto 0);
+           send : in  STD_LOGIC;
+           busy : out  STD_LOGIC;
+           linha : out  STD_LOGIC;
+           reset : in  STD_LOGIC
+	);
+end projeto_2_serial;
+
+architecture Behavioral of projeto_2_serial is
+	-- registrador
+		reg_storage : std_logic_vector(7 downto 0);
+	-- contador
+		signal contador_enable : STD_LOGIC;
+		signal contador_load : STD_LOGIC;
+		signal contador_zeros : std_logic_vector(2 downto 0);
+begin
+-- controle
+process(clock, reset, palavra, )
+--	if (send'event and send='1') then
+	if (busy='0' and send='1') then
+	 linha <= '0';
+	elsif (busy='0' and contador_zeros /= "000") then
+		linha <= '0';
+	elsif (busy='1' and contador_zeros /= "000") then
+		linha <= palavra; -- checar isso
+		
+	end if;
+end process;
+
+-- contador
+process(clock, reset)
+if (reset = '1') then 
+		contador_zeros <= (Others => '0');
+elsif (rising_edge(clock)) then
+	   if (contador_load = '1') then
+			contador_zeros <= (Others => '1);
+		end if;
+		if (contador_enable = '1') then
+			contador_zeros <= contador_zeros - '1';
+		end if;
+end if;
+end process;
+
+
+-- registrador
+process(clock, reset)
+   if (reset = '1') then 
+		reg_storage <= (Others => '0');
+	elsif (rising_edge(clock)) then
+		if (contador_enable = '1') then
+			reg_storage <= palavra;
+		end if;
+	end if;
+end process;
+
+end Behavioral;
