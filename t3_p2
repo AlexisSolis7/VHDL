@@ -62,3 +62,38 @@ process(clock, reset)
 end process;
 
 end Behavioral;
+
+
+
+-- MUX
+
+
+-- Declaração da entidade do MUX
+entity mux_8bits is
+    port (
+        sel : in std_logic_vector(2 downto 0); -- Seletor de 3 bits para escolher qual bit do registrador usar
+        Q : in std_logic_vector(7 downto 0); -- Entrada de dados de 8 bits (saída do registrador)
+        saida : out std_logic -- Saída de um único bit selecionado
+    );
+end mux_8bits;
+
+-- Arquitetura do MUX
+architecture Behavioral of mux_8bits is
+begin
+    -- Processo que determina a saída com base no seletor
+    process(sel, Q) 
+    begin
+        case sel is -- Início da estrutura de seleção
+            when "000" => saida <= Q(0); -- Se sel é 0, pega o bit 0 de Q
+            when "001" => saida <= Q(1); -- Se sel é 1, pega o bit 1 de Q
+            when "010" => saida <= Q(2); -- Se sel é 2, pega o bit 2 de Q
+            when "011" => saida <= Q(3); -- Se sel é 3, pega o bit 3 de Q
+            when "100" => saida <= Q(4); -- Se sel é 4, pega o bit 4 de Q
+            when "101" => saida <= Q(5); -- Se sel é 5, pega o bit 5 de Q
+            when "110" => saida <= Q(6); -- Se sel é 6, pega o bit 6 de Q
+            when "111" => saida <= Q(7); -- Se sel é 7, pega o bit 7 de Q
+            when others => saida <= '0'; -- Caso nenhum valor se encaixe, seta a saída como 0
+        end case; -- Fim da estrutura de seleção
+    end process; -- Fim do processo
+end Behavioral; -- Fim da arquitetura
+
