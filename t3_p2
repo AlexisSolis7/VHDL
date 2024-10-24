@@ -3,34 +3,30 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 
-entity projeto_2_serial is
+entity transmissor is
     Port ( 
 	 -- controle
 			  clock : in STD_LOGIC;
            reset : in  STD_LOGIC;
 			  
 			  palavra : in  STD_LOGIC_VECTOR(7 downto 0);
-           send : in  STD_LOGIC;
+           send : in  STD_LOGIC := '0';
            
-			  busy : out  STD_LOGIC;
-           linha : out  STD_LOGIC
+			  busy : out  STD_LOGIC:= '0';
+           linha : out  STD_LOGIC:= '1'
 	);
-end projeto_2_serial;
+end transmissor;
 
-architecture Behavioral of projeto_2_serial is
+architecture Behavioral of transmissor is
 	-- registrador
 		signal reg_storage : std_logic_vector(7 downto 0);
 	-- contador
 		signal contador_enable : STD_LOGIC;
 		signal contador_load : STD_LOGIC;
-		signal contador_zeros : std_logic_vector(2 downto 0);
+		signal contador_zeros : std_logic_vector(2 downto 0) := "000";
 		
 	-- MUXs
 		signal selected_bit : std_logic;
-		signal mux_2 : std_logic;
-		
-	-- XOR
-		signal xor_controle: STD_LOGIC;
 		
 	---- maquina de estados
 		type STATES is (S0, S1, S2, S3); -- enum
@@ -49,8 +45,7 @@ if (reset = '1') then
 elsif (rising_edge(clock)) then
 	   if (contador_load = '1') then
 			contador_zeros <= (Others => '1');
-		end if;
-		if (contador_enable = '1') then
+		elsif (contador_enable = '1') then
 			contador_zeros <= contador_zeros - 1;
 		end if;
 end if;
@@ -63,9 +58,9 @@ begin
    if (reset = '1') then 
 		reg_storage <= (Others => '0');
 	elsif (rising_edge(clock)) then
-		if (contador_enable = '1') then
+	--	if (scurrent != S0) then
 			reg_storage <= palavra;
-		end if;
+	--	end if;
 	end if;
 end process;
 
@@ -74,16 +69,51 @@ end process;
 selected_bit <= reg_storage (conv_integer(contador_zeros));
 
 -- saida
-linha <= selected_bit when scurr = S2 else 
-			'1' when scurr = S0 else '0';
+linha <= selected_bit when scurrent = S2 else 
+			'1' when scurrent = S0 else '0';
 
-xor_controle <= contador_zeros = "000";
+--	maquina de estados, 2 process , 1 pra registrar e 1 pra gerar o next state
+		
+process(clock, reset, send)
+begin
+	if (reset = '1') then
+	snext <= S0;
+	end if;
+	
+	if (scurrent = S0) then
+		if (send = '1') then
+		snext <= S1;
+		busy <= '1';
+		else snext <= S0;
+		end if;
+	end if;
+	
+	if (scurrent = S1) then
+		snext  <= S2;
+		contador_load <= '1';
+	end if;
 
---	maquina de estados
--- 2 process , 1 pra registrar e 1 pra gerar o next state
-scurrent <= case xor_controle
-		when '1' => if send = '1' then S1,
-		when '0' => if snext = S1,
+	if (scurrent = S2) then
+		if (contador_zeros = "000") then
+		snext <= S3;
+		contador_enable <= '0';
+		else 
+			contador_enable <= '1';
+			contador_load <= '0';
+		end if;
+	end if;
+	
+	if (scurrent = S3) then
+		snext <= S0;
+		busy <= '0';
+	end if;
 
+	
+end process;
+
+process(clock, reset)
+begin
+	scurrent <= snext;
+end process;
 
 end Behavioral; -- Fim da arquitetura
