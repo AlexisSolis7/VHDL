@@ -9,7 +9,7 @@ port (
 	carga: in std_logic := '0';
 	reset: in std_logic := '0';
 	conta: in std_logic := '0';
-	signal chaves: std_logic_vector(6 downto 0);
+	chaves: in std_logic_vector(6 downto 0);
 	signal an: std_logic := '0';
 	signal dec_ddp: std_logic := '0'
 );
@@ -21,7 +21,7 @@ architecture Behavioral of cron_dec is
 	signal contador_seg  : std_logic_vector(7 downto 0) := "00000000";
 	signal Segundos_BCD: std_logic_vector(7 downto 0);
 
-	signal contador_min  : std_logic_vector(7 downto 0) := "00001111";
+	signal contador_min  : std_logic_vector(6 downto 0) := "0000000";
 	signal Minutos_BCD: std_logic_vector(7 downto 0);
 
 	signal d1: std_logic_vector(5 downto 0);
@@ -74,12 +74,12 @@ begin
 end process;
 
 -- máquina de estados
-process(clock, reset)
+process(clock_1seg, reset)
 begin
 	current_state <= next_state;
 end process;
 
-process(clock, reset)
+process(clock_1seg, reset)
 begin
 	if (carga = '1' and current_state = REP) then
 		next_state <= LOAD;
@@ -94,30 +94,30 @@ end process;
 process(clock_1seg, reset)
 begin
 	if (current_state = LOAD) then
-		contador_seg <= "00111100"; -- 60;
+		contador_seg <= "00111011"; -- 59;
 	end if;
 	if (current_state = COUNT) then
-		if (contador_seg > 1) then
+		if (contador_seg > 0) then
 			contador_seg <= contador_seg - '1';
-		else contador_seg <= "00111100";
+		else contador_seg <= "00111011";
 		end if;
 	end if;
 end process;
 
--- P5: contador de minutos
+-- contador de minutos
 process(clock_1seg, reset)
 begin
 	if (current_state = LOAD) then
-		contador_min <= "00001111";
+		contador_min <= chaves;
 	end if;
-	if (current_state = COUNT and contador_seg = 1) then
+	if (current_state = COUNT and contador_seg = 0) then
 		contador_min <= contador_min - '1';
 	end if;
 end process;
 
 -- instanciação das ROMs
 Segundos_BCD <= conv_to_BCD(conv_integer(contador_seg));
---Minutos_BCD <= conv_to_BCD(conv_integer(contador_min));
+Minutos_BCD <= conv_to_BCD(conv_integer(contador_min));
 
 -- display driver
 d1 <= '1' & Segundos_BCD(3 downto 0) & '1';

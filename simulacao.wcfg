@@ -12,7 +12,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="11" />
+   <WVObjectSize size="12" />
    <wvobject fp_name="/tb_cron_dec/clock" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">clock</obj_property>
       <obj_property name="ObjectShortName">clock</obj_property>
@@ -20,12 +20,6 @@
    <wvobject fp_name="/tb_cron_dec/uut/clock_1seg" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">clock_1seg</obj_property>
       <obj_property name="ObjectShortName">clock_1seg</obj_property>
-   </wvobject>
-   <wvobject fp_name="/tb_cron_dec/uut/count_25k" type="other" db_ref_id="1">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">count_25k</obj_property>
-      <obj_property name="ObjectShortName">count_25k</obj_property>
-      <obj_property name="label">count_25k</obj_property>
    </wvobject>
    <wvobject fp_name="/tb_cron_dec/reset" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">reset</obj_property>
@@ -49,8 +43,8 @@
       <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/tb_cron_dec/uut/contador_min" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">contador_min[7:0]</obj_property>
-      <obj_property name="ObjectShortName">contador_min[7:0]</obj_property>
+      <obj_property name="ElementShortName">contador_min[6:0]</obj_property>
+      <obj_property name="ObjectShortName">contador_min[6:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/tb_cron_dec/uut/current_state" type="other" db_ref_id="1">
@@ -60,5 +54,13 @@
    <wvobject fp_name="/tb_cron_dec/uut/next_state" type="other" db_ref_id="1">
       <obj_property name="ElementShortName">next_state</obj_property>
       <obj_property name="ObjectShortName">next_state</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_cron_dec/uut/segundos_bcd" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">segundos_bcd[7:0]</obj_property>
+      <obj_property name="ObjectShortName">segundos_bcd[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_cron_dec/uut/minutos_bcd" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">minutos_bcd[7:0]</obj_property>
+      <obj_property name="ObjectShortName">minutos_bcd[7:0]</obj_property>
    </wvobject>
 </wave_config>
