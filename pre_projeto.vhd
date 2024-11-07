@@ -10,8 +10,9 @@ port (
 	reset: in std_logic := '0';
 	conta: in std_logic := '0';
 	chaves: in std_logic_vector(6 downto 0);
-	signal an: std_logic := '0';
-	signal dec_ddp: std_logic := '0'
+
+	an: out std_logic_vector(3 downto 0);
+	dec_ddp: out std_logic_vector(7 downto 0)
 );
 end cron_dec;
 
@@ -22,11 +23,14 @@ architecture Behavioral of cron_dec is
 	signal Segundos_BCD: std_logic_vector(7 downto 0);
 	signal contador_min  : std_logic_vector(6 downto 0);
 	signal Minutos_BCD: std_logic_vector(7 downto 0);
+	
 
-	signal d1: std_logic_vector(5 downto 0);
-	signal d2: std_logic_vector(5 downto 0);
-	signal d3: std_logic_vector(5 downto 0);
-	signal d4: std_logic_vector(5 downto 0);
+	signal d4_internal : std_logic_vector(5 downto 0);
+   signal d3_internal : std_logic_vector(5 downto 0);
+   signal d2_internal : std_logic_vector(5 downto 0);
+   signal d1_internal : std_logic_vector(5 downto 0);
+   signal an_internal : std_logic_vector(3 downto 0);
+   signal dec_ddp_internal : std_logic_vector(7 downto 0);
 
 	signal count_25K: integer range 0 to 25000000;
 
@@ -86,9 +90,8 @@ process(clock_1seg, reset)
 begin
 	if (carga = '1' and current_state = REP) then
 		next_state <= LOAD;
-	elsif (current_state = LOAD) then
+	elsif (current_state = LOAD and conta = '1') then
 		next_state <= COUNT;
-		-- contador_seg <= 60;
 	elsif (current_state = COUNT) then
 		if (contador_seg = 0 and contador_min = 0) then
 			next_state <= REP;
@@ -136,17 +139,19 @@ Segundos_BCD <= conv_to_BCD(conv_integer(contador_seg));
 Minutos_BCD <= conv_to_BCD(conv_integer(contador_min));
 
 -- display driver
-d1 <= '1' & Segundos_BCD(3 downto 0) & '1';
-d2 <= '1' & Segundos_BCD(6 downto 3) & '1';
-d3 <= '1' & Minutos_BCD(3 downto 0) & '1';
-d4 <= '1' & Minutos_BCD(7 downto 4) & '1';
+d1_internal <= '1' & Segundos_BCD(3 downto 0) & '1';
+d2_internal <= '1' & Segundos_BCD(7 downto 4) & '1';
+d3_internal <= '1' & Minutos_BCD(3 downto 0) & '1';
+d4_internal <= '1' & Minutos_BCD(7 downto 4) & '1';
 
 display_driver : entity work.dspl_drv port map (
 	  clock => clock_1seg,
 	  reset => reset,
-		d4 => d4,
-		d3 => d3,
-		d2 => d2,
-		d1 => d1
+		d4 => d4_internal,
+		d3 => d3_internal,
+		d2 => d2_internal,
+		d1 => d1_internal,
+		an => an_internal,
+		dec_ddp => dec_ddp_internal
 );
 end Behavioral;
