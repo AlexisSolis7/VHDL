@@ -18,10 +18,9 @@ end cron_dec;
 architecture Behavioral of cron_dec is
 	signal clock_1seg: std_logic;
 
-	signal contador_seg  : std_logic_vector(7 downto 0) := "00000000";
+	signal contador_seg  : std_logic_vector(7 downto 0);
 	signal Segundos_BCD: std_logic_vector(7 downto 0);
-
-	signal contador_min  : std_logic_vector(6 downto 0) := "0000000";
+	signal contador_min  : std_logic_vector(6 downto 0);
 	signal Minutos_BCD: std_logic_vector(7 downto 0);
 
 	signal d1: std_logic_vector(5 downto 0);
@@ -76,7 +75,11 @@ end process;
 -- máquina de estados
 process(clock_1seg, reset)
 begin
-	current_state <= next_state;
+	if (reset='1') then
+		current_state <= REP;
+	elsif (clock_1seg'event and clock_1seg = '1') then
+		current_state <= next_state;
+	end if;
 end process;
 
 process(clock_1seg, reset)
@@ -87,19 +90,28 @@ begin
 		next_state <= COUNT;
 		-- contador_seg <= 60;
 	elsif (current_state = COUNT) then
+		if (contador_seg = 0 and contador_min = 0) then
+			next_state <= REP;
+		else next_state <= COUNT;
+		end if;
 	end if;
 end process;
 
 -- contador de segundos
 process(clock_1seg, reset)
 begin
-	if (current_state = LOAD) then
-		contador_seg <= "00111011"; -- 59;
-	end if;
-	if (current_state = COUNT) then
-		if (contador_seg > 0) then
-			contador_seg <= contador_seg - '1';
-		else contador_seg <= "00111011";
+	if (reset = '1') then
+		contador_seg <= (Others =>'0');
+	elsif (clock_1seg'event and clock_1seg = '1') then
+		if (current_state = LOAD) then
+			contador_seg <= "00000000"; -- 59;
+		end if;
+		if (current_state = COUNT) then
+			if (contador_seg > 0) then
+				contador_seg <= contador_seg - '1';
+			elsif (contador_min > 0) then
+				contador_seg <= "00111011";
+			end if;
 		end if;
 	end if;
 end process;
@@ -107,11 +119,15 @@ end process;
 -- contador de minutos
 process(clock_1seg, reset)
 begin
-	if (current_state = LOAD) then
-		contador_min <= chaves;
-	end if;
-	if (current_state = COUNT and contador_seg = 0) then
-		contador_min <= contador_min - '1';
+	if (reset = '1') then
+		contador_min <= (Others =>'0');
+	elsif (clock_1seg'event and clock_1seg = '1') then
+		if (current_state = LOAD) then
+			contador_min <= chaves;
+		end if;
+		if (current_state = COUNT and contador_seg = 0 and contador_min > 0) then
+			contador_min <= contador_min - '1';
+		end if;
 	end if;
 end process;
 
@@ -121,10 +137,10 @@ Minutos_BCD <= conv_to_BCD(conv_integer(contador_min));
 
 -- display driver
 d1 <= '1' & Segundos_BCD(3 downto 0) & '1';
--- d2 <= ...
--- d3 <= ...
--- d4 <= ...
--- ...
+d2 <= '1' & Segundos_BCD(6 downto 3) & '1';
+d3 <= '1' & Minutos_BCD(3 downto 0) & '1';
+d4 <= '1' & Minutos_BCD(7 downto 4) & '1';
+
 display_driver : entity work.dspl_drv port map (
 	  clock => clock_1seg,
 	  reset => reset,
