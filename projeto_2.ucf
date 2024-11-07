@@ -1,37 +1,34 @@
-# Nexys 2 UCF for Timer VHDL Project
+# Nexys 2 UCF for Timer VHDL Project with `d4`, `d3`, `d2`, `d1` Displays
 
-# Clock Pin: Assuming you're using the on-board 100 MHz clock
-NET "clk" LOC = "P89";  # Pin for clock (on-board 100 MHz)
+# Clock Pin
+NET "clock" LOC = "P89";  # On-board 100 MHz clock
 
-# 7-segment display (4 digits, assuming 7-segment is connected via pins)
-NET "seg[0]" LOC = "P10";  # Segment a of 7-segment
-NET "seg[1]" LOC = "P11";  # Segment b of 7-segment
-NET "seg[2]" LOC = "P12";  # Segment c of 7-segment
-NET "seg[3]" LOC = "P13";  # Segment d of 7-segment
-NET "seg[4]" LOC = "P14";  # Segment e of 7-segment
-NET "seg[5]" LOC = "P15";  # Segment f of 7-segment
-NET "seg[6]" LOC = "P16";  # Segment g of 7-segment
+# Anode control pins (for enabling each display in a multiplexed manner)
+NET "an[0]" LOC = "P17";  # Enable anode for d1
+NET "an[1]" LOC = "P18";  # Enable anode for d2
+NET "an[2]" LOC = "P19";  # Enable anode for d3
+NET "an[3]" LOC = "P20";  # Enable anode for d4
 
-# Control Pins for enabling/disabling 7-segment digits (if applicable)
-NET "digit[0]" LOC = "P17";  # Enable digit 1 (for example)
-NET "digit[1]" LOC = "P18";  # Enable digit 2
-NET "digit[2]" LOC = "P19";  # Enable digit 3
-NET "digit[3]" LOC = "P20";  # Enable digit 4
+# dec_ddp
+NET "dec_ddp[0]" LOC = "C17";
+NET "dec_ddp[1]" LOC = "H14";
+NET "dec_ddp[2]" LOC = "J17";
+NET "dec_ddp[3]" LOC = "G14";
+NET "dec_ddp[4]" LOC = "D16";
+NET "dec_ddp[5]" LOC = "D17";
+NET "dec_ddp[6]" LOC = "F18";
+NET "dec_ddp[7]" LOC = "L18";
 
-# Reset Pin
-NET "reset" LOC = "P21";
+# Timer Control Signals
+NET "reset" LOC = "P21";    # Reset button
+NET "carga" LOC = "P22";    # Load input (set new time)
+NET "conta" LOC = "P23";    # Start/stop counting
 
-# Load time Pin
-NET "carga" LOC = "P22"; 
-
-# Start/Stop Counting Pin
-NET "conta" LOC = "P23";
-
-# Minute Counter (7-bit switch input to set minutes count)
-NET "chaves[0]" LOC = "P24";  # Pin for chaves(0)
-NET "chaves[1]" LOC = "P25";  # Pin for chaves(1)
-NET "chaves[2]" LOC = "P26";  # Pin for chaves(2)
-NET "chaves[3]" LOC = "P27";  # Pin for chaves(3)
-NET "chaves[4]" LOC = "P28";  # Pin for chaves(4)
-NET "chaves[5]" LOC = "P29";  # Pin for chaves(5)
-NET "chaves[6]" LOC = "P30";  # Pin for chaves(6)
+# Minute Counter (7-bit input to set minutes count)
+NET "chaves[0]" LOC = "P24";  # chaves(0)
+NET "chaves[1]" LOC = "P25";  # chaves(1)
+NET "chaves[2]" LOC = "P26";  # chaves(2)
+NET "chaves[3]" LOC = "P27";  # chaves(3)
+NET "chaves[4]" LOC = "P28";  # chaves(4)
+NET "chaves[5]" LOC = "P29";  # chaves(5)
+NET "chaves[6]" LOC = "P31";  # chaves(6)
