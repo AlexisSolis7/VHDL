@@ -1,0 +1,37 @@
+# Nexys 2 UCF for Timer VHDL Project
+
+# Clock Pin: Assuming you're using the on-board 100 MHz clock
+NET "clk" LOC = "P89";  # Pin for clock (on-board 100 MHz)
+
+# 7-segment display (4 digits, assuming 7-segment is connected via pins)
+NET "seg[0]" LOC = "P10";  # Segment a of 7-segment
+NET "seg[1]" LOC = "P11";  # Segment b of 7-segment
+NET "seg[2]" LOC = "P12";  # Segment c of 7-segment
+NET "seg[3]" LOC = "P13";  # Segment d of 7-segment
+NET "seg[4]" LOC = "P14";  # Segment e of 7-segment
+NET "seg[5]" LOC = "P15";  # Segment f of 7-segment
+NET "seg[6]" LOC = "P16";  # Segment g of 7-segment
+
+# Control Pins for enabling/disabling 7-segment digits (if applicable)
+NET "digit[0]" LOC = "P17";  # Enable digit 1 (for example)
+NET "digit[1]" LOC = "P18";  # Enable digit 2
+NET "digit[2]" LOC = "P19";  # Enable digit 3
+NET "digit[3]" LOC = "P20";  # Enable digit 4
+
+# Reset Pin
+NET "reset" LOC = "P21";
+
+# Load time Pin
+NET "carga" LOC = "P22"; 
+
+# Start/Stop Counting Pin
+NET "conta" LOC = "P23";
+
+# Minute Counter (7-bit switch input to set minutes count)
+NET "chaves[0]" LOC = "P24";  # Pin for chaves(0)
+NET "chaves[1]" LOC = "P25";  # Pin for chaves(1)
+NET "chaves[2]" LOC = "P26";  # Pin for chaves(2)
+NET "chaves[3]" LOC = "P27";  # Pin for chaves(3)
+NET "chaves[4]" LOC = "P28";  # Pin for chaves(4)
+NET "chaves[5]" LOC = "P29";  # Pin for chaves(5)
+NET "chaves[6]" LOC = "P30";  # Pin for chaves(6)
