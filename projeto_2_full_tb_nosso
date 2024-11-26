@@ -1,0 +1,36 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+entity tb_cron_basq is
+end tb_cron_basq;
+architecture tb_cron_basq of tb_cron_basq is
+signal clock : std_logic := '1';
+signal reset, carga, para_continua, novo_quarto : std_logic;
+signal c_quarto: STD_LOGIC_VECTOR (1 downto 0) := (Others => '0');
+signal c_minutos: STD_LOGIC_VECTOR (3 downto 0) := (Others => '0');
+signal c_segundos: STD_LOGIC_VECTOR (3 downto 0) := (Others => '0');
+begin
+clock <= not clock after 10 ns;
+reset <= '1', '0' after 73 ns;
+carga <= '0', '1' after 133 ns, '0' after 425 ns;
+c_quarto <= "10" after 200ns, (Others => '0') after 650ns;
+c_minutos <= "0000" after 200ns, (Others => '0') after 650ns;
+c_segundos <= "0110" after 200ns, (Others => '0') after 650ns;
+novo_quarto <= '1' after 12800ns;
+para_continua <= '0', '1' after 543 ns, '0' after 925 ns, '1' after 13000ns;
+-- toDo: setar chaves
+uut : entity work.top_cron_basq
+generic map ( CLOCK_FREQ => 2 ) -- para simulação utilizar um divisor menor
+port map (
+clock => clock,
+reset => reset,
+carga => carga,
+para_continua => para_continua,
+novo_quarto => novo_quarto,
+c_quarto => c_quarto,
+c_minutos => c_minutos,
+c_segundos => c_segundos,
+an => open, -- Não é necessário na simulação ver an e dec_ddp, sua interpretação
+dec_ddp => open); -- em binário é complexa. Usem a palavra chave open do VHDL
+end tb_cron_basq;
