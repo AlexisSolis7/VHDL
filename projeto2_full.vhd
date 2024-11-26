@@ -36,6 +36,9 @@ architecture Behavioral of top_cron_basq is
 	signal contador_min  : std_logic_vector(6 downto 0);
 	signal contador_quarto  : std_logic_vector(6 downto 0);
 	signal contador_centesimo  : std_logic_vector(6 downto 0);
+	
+	signal para_continua_int : std_logic;
+	signal novo_quarto_int : std_logic;
 
 	signal Centesimos_BCD: std_logic_vector(7 downto 0);
 	signal Segundos_BCD: std_logic_vector(7 downto 0);
@@ -177,7 +180,7 @@ begin
 				contador_min <= contador_min - '1';
 				enable_quarto <= '0';
 			else
-				contador_min <= "0111111";
+				contador_min <= "0001111";
 				enable_quarto <= '1';
 			end if;
 		end if;
@@ -223,4 +226,17 @@ display_driver : entity work.dspl_drv port map (
 		an => an_internal,
 		dec_ddp => dec_ddp_internal
 );
+
+-- debouncer
+Debounce_inst: entity work.Debounce
+  --generic map (
+   -- DIVISION_RATE => 4_000_000
+  --)
+  port map(
+    clock    => clock,
+    reset    => reset,
+    key      => raw_key,
+    debkey   => debounced_key
+  );
+
 end Behavioral;
