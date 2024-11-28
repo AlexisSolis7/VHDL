@@ -4,7 +4,7 @@ use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity top_cron_basq is
-generic ( CLOCK_FREQ : integer := 50_000_000 );
+generic ( MAXCOUNT : integer := 50_000_000 );
 port ( 
 clock: in STD_LOGIC;
 
@@ -17,7 +17,11 @@ novo_quarto: in STD_LOGIC;
 --- valores de carga - 8 dip-switches -
 c_quarto: in STD_LOGIC_VECTOR (1 downto 0);
 c_minutos: in STD_LOGIC_VECTOR (3 downto 0);
-c_segundos: in STD_LOGIC_VECTOR (3 downto 0);
+c_segundos: in STD_LOGIC_VECTOR (5 downto 0);
+quarto: in std_logic_vector(1 downto 0);
+minutos: in std_logic_vector(3 downto 0);
+segundos: in std_logic_vector(5 downto 0);
+centesimos: std_logic_vector(6 downto 0);  
 
 -- interface para os 8 displays de 7 segmentos
 dec_ddp: out STD_LOGIC_VECTOR (7 downto 0);
@@ -39,6 +43,7 @@ architecture Behavioral of top_cron_basq is
 	
 	signal para_continua_int : std_logic;
 	signal novo_quarto_int : std_logic;
+	signal carga_int : std_logic;
 
 	signal Centesimos_BCD: std_logic_vector(7 downto 0);
 	signal Segundos_BCD: std_logic_vector(7 downto 0);
@@ -98,7 +103,7 @@ process(clock, reset)
 begin
 	if (carga = '1' and current_state = REP) then
 		next_state <= LOAD;
-	elsif (current_state = LOAD and para_continua = '1') then
+	elsif (para_continua = '1') then
 		next_state <= COUNT;
 	elsif (current_state = COUNT) then
 		if (contador_seg = 0 and contador_min = 0 and contador_centesimo = 0) then
@@ -115,11 +120,13 @@ begin
 			contador_clk <= (Others => '0');
 		elsif (clock'event and clock='1') then
 			count_25K <= count_25K + 1;
-			if (count_25K =  CLOCK_FREQ - 1) then
+			if (count_25K =  MAXCOUNT - 1) then
 				count_25K <= 0;
-				enable_cent <= '1';
-			else 
-				enable_cent <= '0';
+				if (current_state = COUNT) then
+					enable_cent <= '1';
+				else 
+					enable_cent <= '0';
+				end if;
 			end if;
 		end if;
 end process;
@@ -152,7 +159,7 @@ begin
 		contador_seg <= (Others =>'0');
 	elsif (clock'event and clock = '1') then
 		if (current_state = LOAD) then
-			contador_seg <= "0000" & c_segundos;
+			contador_seg <= "00" & c_segundos;
 		end if;
 		if (current_state = COUNT) then
 			enable_minuto <= '0';
@@ -170,7 +177,7 @@ end process;
 process(clock, reset)
 begin
 	if (reset = '1') then
-		contador_min <= (Others =>'0');
+		contador_min <= "0001111";
 	elsif (clock'event and clock = '1') then
 		if (current_state = LOAD) then
 			contador_min <= "000" & c_minutos;
@@ -179,9 +186,6 @@ begin
 			if (contador_min > 0) then
 				contador_min <= contador_min - '1';
 				enable_quarto <= '0';
-			else
-				contador_min <= "0001111";
-				enable_quarto <= '1';
 			end if;
 		end if;
 	end if;
@@ -198,7 +202,7 @@ begin
 		elsif (enable_quarto = '1' and current_state = COUNT) then
 				-- toDo: parar em 4
 			contador_quarto <= contador_quarto + 1;
-		elsif (current_state = STOP and novo_quarto = '1' and contador_quarto < 4) then
+		elsif (current_state = STOP and novo_quarto = '1' and contador_quarto < "100") then
 			contador_quarto <= contador_quarto + 1;
 		end if;
 	end if;
@@ -228,15 +232,23 @@ display_driver : entity work.dspl_drv port map (
 );
 
 -- debouncer
-Debounce_inst: entity work.Debounce
-  --generic map (
-   -- DIVISION_RATE => 4_000_000
-  --)
-  port map(
+ para_continua_int_inst: entity work.Debounce port map(
     clock    => clock,
     reset    => reset,
-    key      => raw_key,
-    debkey   => debounced_key
+    key      => para_continua,
+    debkey   => para_continua_int
+  );
+ novo_quarto_int_inst: entity work.Debounce port map(
+	 clock    => clock,
+    reset    => reset,
+    key      => novo_quarto,
+    debkey   => novo_quarto_int
+  );
+ carga_int_inst: entity work.Debounce port map(
+	 clock    => clock,
+    reset    => reset,
+    key      => carga,
+    debkey   => carga_int
   );
 
 end Behavioral;
