@@ -33,8 +33,8 @@ architecture Behavioral of top_cron_basq is
 	signal enable_cent: std_logic;
 	signal enable_segundo: std_logic;
 	signal enable_minuto: std_logic;
-	signal enable_quarto: std_logic;
-	
+	signal fim_quarto : std_logic;
+
 	signal contador_clk  : std_logic_vector(7 downto 0);
 	signal contador_seg  : std_logic_vector(7 downto 0);
 	signal contador_min  : std_logic_vector(6 downto 0);
@@ -99,17 +99,17 @@ begin
 	end if;
 end process;
 
+
 process(clock, reset)
 begin
 	if (carga = '1' and current_state = REP) then
 		next_state <= LOAD;
-	elsif (para_continua = '1') then
+	elsif (para_continua = '1' and (current_state = REP or current_state = LOAD)) then
 		next_state <= COUNT;
-	elsif (current_state = COUNT) then
-		if (contador_seg = 0 and contador_min = 0 and contador_centesimo = 0) then
-			next_state <= STOP;
-		else next_state <= COUNT;
-		end if;
+	elsif (current_state = COUNT and (para_continua = '1' or fim_quarto = '1')) then
+		next_state <= STOP;
+	elsif (current_state = STOP and novo_quarto = '1' and fim_quarto = '1') then
+		next_state <= REP;
 	end if;
 end process;
 
@@ -136,17 +136,18 @@ process(clock, reset)
 begin
 	if (reset = '1') then
 		contador_centesimo <= (Others =>'0');
+		enable_segundo <= '0';
 	elsif (clock'event and clock = '1') then
 		if (current_state = LOAD) then
 			contador_centesimo <= (Others =>'0');
 		end if;
 		if (current_state = COUNT) then
+			enable_segundo <= '0';
 			if (contador_centesimo > 0) then
 				contador_centesimo <= contador_centesimo - '1';
-				enable_segundo <= '0';
-			else 		
-				enable_segundo <= '1';
+			elsif (fim_quarto = '0') then
 				contador_centesimo <= "1100011";
+				enable_segundo <= '1';
 			end if;
 		end if;
 	end if;
@@ -182,11 +183,11 @@ begin
 		if (current_state = LOAD) then
 			contador_min <= "000" & c_minutos;
 		end if;
-		if (current_state = COUNT and enable_minuto = '1') then
-			if (contador_min > 0) then
-				contador_min <= contador_min - '1';
-				enable_quarto <= '0';
-			end if;
+		if (current_state = COUNT and enable_minuto = '1' and contador_min > 0) then
+			contador_min <= contador_min - '1';
+		end if;
+		if (current_state = REP and fim_quarto = '1') then
+			contador_min <= "0001111";
 		end if;
 	end if;
 end process;
@@ -195,18 +196,17 @@ end process;
 process(clock, reset)
 begin
 	if (reset = '1') then
-		contador_quarto <= (Others =>'0');
+		contador_quarto <= "0000001";-- (Others =>'0');
 	elsif (clock'event and clock = '1') then
 		if (current_state = LOAD) then
 			contador_quarto <= "00000" & c_quarto;
-		elsif (enable_quarto = '1' and current_state = COUNT) then
-				-- toDo: parar em 4
-			contador_quarto <= contador_quarto + 1;
-		elsif (current_state = STOP and novo_quarto = '1' and contador_quarto < "100") then
+		elsif (fim_quarto = '1' and novo_quarto = '1'and contador_quarto < "100") then
 			contador_quarto <= contador_quarto + 1;
 		end if;
 	end if;
 end process;
+
+fim_quarto <= '1' when (contador_seg = 0 and contador_min = 0 and contador_centesimo = 0) else '0';
 
 -- instanciação das ROMs
 Segundos_BCD <= conv_to_BCD(conv_integer(contador_seg));
