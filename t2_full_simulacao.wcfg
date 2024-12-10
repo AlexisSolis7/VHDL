@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="/home/pedro-surf/t2_full/cron_basq_tb_isim_beh1.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="cron_basq_tb" />
+            <top_module name="std_logic_1164" />
+            <top_module name="std_logic_arith" />
+            <top_module name="std_logic_unsigned" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="15" />
+   <wvobject fp_name="/cron_basq_tb/clock" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clock</obj_property>
+      <obj_property name="ObjectShortName">clock</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cron_basq_tb/reset" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cron_basq_tb/para_continua" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">para_continua</obj_property>
+      <obj_property name="ObjectShortName">para_continua</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cron_basq_tb/novo_quarto" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">novo_quarto</obj_property>
+      <obj_property name="ObjectShortName">novo_quarto</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cron_basq_tb/carga" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">carga</obj_property>
+      <obj_property name="ObjectShortName">carga</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cron_basq_tb/inst_cron_basq_PI/current_state" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">current_state</obj_property>
+      <obj_property name="ObjectShortName">current_state</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cron_basq_tb/inst_cron_basq_PI/next_state" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">next_state</obj_property>
+      <obj_property name="ObjectShortName">next_state</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cron_basq_tb/inst_cron_basq_PI/fim_quarto" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">fim_quarto</obj_property>
+      <obj_property name="ObjectShortName">fim_quarto</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cron_basq_tb/inst_cron_basq_PI/enable_minuto" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">enable_minuto</obj_property>
+      <obj_property name="ObjectShortName">enable_minuto</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cron_basq_tb/inst_cron_basq_PI/enable_segundo" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">enable_segundo</obj_property>
+      <obj_property name="ObjectShortName">enable_segundo</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cron_basq_tb/inst_cron_basq_PI/enable_cent" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">enable_cent</obj_property>
+      <obj_property name="ObjectShortName">enable_cent</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cron_basq_tb/inst_cron_basq_PI/contador_quarto" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">contador_quarto[6:0]</obj_property>
+      <obj_property name="ObjectShortName">contador_quarto[6:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cron_basq_tb/inst_cron_basq_PI/contador_min" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">contador_min[6:0]</obj_property>
+      <obj_property name="ObjectShortName">contador_min[6:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cron_basq_tb/inst_cron_basq_PI/contador_seg" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">contador_seg[7:0]</obj_property>
+      <obj_property name="ObjectShortName">contador_seg[7:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cron_basq_tb/inst_cron_basq_PI/contador_centesimo" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">contador_centesimo[6:0]</obj_property>
+      <obj_property name="ObjectShortName">contador_centesimo[6:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+</wave_config>
