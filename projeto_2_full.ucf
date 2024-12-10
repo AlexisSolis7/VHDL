@@ -1,0 +1,24 @@
+NET "clock" LOC = B8;
+NET "reset" LOC = B18;
+NET "para_continua" LOC = D18;
+NET "novo_quarto" LOC = H13;
+
+# dec_ddp
+NET "dec_ddp[0]" LOC = "C17";
+NET "dec_ddp[1]" LOC = "H14";
+NET "dec_ddp[2]" LOC = "J17";
+NET "dec_ddp[3]" LOC = "G14";
+NET "dec_ddp[4]" LOC = "D16";
+NET "dec_ddp[5]" LOC = "D17";
+NET "dec_ddp[6]" LOC = "F18";
+NET "dec_ddp[7]" LOC = "L18";
+
+
+NET "c_quarto[0]" LOC = "R17";
+NET "c_quarto[1]" LOC = "N17";
+NET "c_minutos[0]" LOC = "L13";
+NET "c_minutos[1]" LOC = "L14";
+NET "c_minutos[2]" LOC = "K17";
+NET "c_minutos[3]" LOC = "K18";
+NET "c_segundos[0]" LOC = "H18";
+NET "c_segundos[1]" LOC = "G18";
