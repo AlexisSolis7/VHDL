@@ -1,7 +1,7 @@
-# Nexys 2 UCF for Timer VHDL Project with `d4`, `d3`, `d2`, `d1` Displays
-
-# Clock Pin
-NET "clock" LOC = "P89";  # On-board 100 MHz clock
+NET "clock" LOC = B8;
+NET "reset" LOC = B18;
+NET "conta" LOC = D18;
+NET "carga" LOC = H13;
 
 # Anode control pins (for enabling each display in a multiplexed manner)
 NET "an[0]" LOC = "P17";  # Enable anode for d1
@@ -19,16 +19,12 @@ NET "dec_ddp[5]" LOC = "D17";
 NET "dec_ddp[6]" LOC = "F18";
 NET "dec_ddp[7]" LOC = "L18";
 
-# Timer Control Signals
-NET "reset" LOC = "P21";    # Reset button
-NET "carga" LOC = "P22";    # Load input (set new time)
-NET "conta" LOC = "P23";    # Start/stop counting
 
 # Minute Counter (7-bit input to set minutes count)
-NET "chaves[0]" LOC = "P24";  # chaves(0)
-NET "chaves[1]" LOC = "P25";  # chaves(1)
-NET "chaves[2]" LOC = "P26";  # chaves(2)
-NET "chaves[3]" LOC = "P27";  # chaves(3)
-NET "chaves[4]" LOC = "P28";  # chaves(4)
-NET "chaves[5]" LOC = "P29";  # chaves(5)
-NET "chaves[6]" LOC = "P31";  # chaves(6)
+NET "chaves[0]" LOC = "R17";  # chaves(0)
+NET "chaves[1]" LOC = "N17";  # chaves(1)
+NET "chaves[2]" LOC = "L13";  # chaves(2)
+NET "chaves[3]" LOC = "L14";  # chaves(3)
+NET "chaves[4]" LOC = "K17";  # chaves(4)
+NET "chaves[5]" LOC = "K18";  # chaves(5)
+NET "chaves[6]" LOC = "H18";  # chaves(6)
