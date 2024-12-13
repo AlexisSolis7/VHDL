@@ -47,17 +47,17 @@ architecture Behavioral of top_cron_basq is
 
 	signal Centesimos_BCD: std_logic_vector(7 downto 0);
 	signal Segundos_BCD: std_logic_vector(7 downto 0);
-	signal Minutos_BCD: std_logic_vector(7 downto 0);
-	signal Quarto_BCD: std_logic_vector(7 downto 0);
+	-- signal Minutos_BCD: std_logic_vector(7 downto 0);
+	-- signal Quarto_BCD: std_logic_vector(7 downto 0);
 	
 	
 
 	signal d4_internal : std_logic_vector(5 downto 0);
-   signal d3_internal : std_logic_vector(5 downto 0);
-   signal d2_internal : std_logic_vector(5 downto 0);
-   signal d1_internal : std_logic_vector(5 downto 0);
-   signal an_internal : std_logic_vector(3 downto 0);
-   signal dec_ddp_internal : std_logic_vector(7 downto 0);
+   	signal d3_internal : std_logic_vector(5 downto 0);
+   	signal d2_internal : std_logic_vector(5 downto 0);
+   	signal d1_internal : std_logic_vector(5 downto 0);
+   	signal an_internal : std_logic_vector(3 downto 0);
+   	signal dec_ddp_internal : std_logic_vector(7 downto 0);
 
 	signal count_25K: integer range 0 to 25000000;
 
@@ -209,16 +209,21 @@ end process;
 fim_quarto <= '1' when (contador_seg = 0 and contador_min = 0 and contador_centesimo = 0) else '0';
 
 -- instanciação das ROMs
-Segundos_BCD <= conv_to_BCD(conv_integer(contador_seg));
-Minutos_BCD <= conv_to_BCD(conv_integer(contador_min));
 Centesimos_BCD <= conv_to_BCD(conv_integer(contador_centesimo));
-Quarto_BCD <= conv_to_BCD(conv_integer(contador_quarto));
+Segundos_BCD <= conv_to_BCD(conv_integer(contador_seg));
+
+-- Minutos_BCD <= conv_to_BCD(conv_integer(contador_min)); -- Estes sinais devem ir para os LEDS LD0 A LD3 - Minutos em binário 15-0
+-- Quarto_BCD <= conv_to_BCD(conv_integer(contador_quarto)); -- Estes sinais devem ir para os LEDS LD4 A LD7 - Quarto em quatro bits one-hot
 
 -- display driver
-d1_internal <= '1' & Segundos_BCD(3 downto 0) & '1';
-d2_internal <= '1' & Segundos_BCD(7 downto 4) & '1';
-d3_internal <= '1' & Minutos_BCD(3 downto 0) & '1';
-d4_internal <= '1' & Minutos_BCD(7 downto 4) & '1';
+--d1_internal <= '1' & Segundos_BCD(3 downto 0) & '1';
+--d2_internal <= '1' & Segundos_BCD(7 downto 4) & '1';
+--d3_internal <= '1' & Minutos_BCD(3 downto 0) & '1';
+--d4_internal <= '1' & Minutos_BCD(7 downto 4) & '1';
+d1_internal <= '1' & Centesimos_BCD(3 downto 0) & '1';
+d2_internal <= '1' & Centesimos_BCD(7 downto 4) & '1';
+d3_internal <= '1' & Segundos_BCD(3 downto 0) & '1';
+d4_internal <= '1' & Segundos_BCD(7 downto 4) & '1';
 
 display_driver : entity work.dspl_drv port map (
 	  clock => clock,
